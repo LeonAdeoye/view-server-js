@@ -73,6 +73,8 @@ const makeMessage = () =>
     // If it didn't have an entry, a new property would be added to the pricing object.
     pricing[symbol] = round(lastPrice + randInt(-5, 5) / 100.0, 2);
 
+    console.log("symbol: " + symbol + ", bid: " + bid + ", ask: " + ask);
+
     return { symbol, bid, ask };
 };
 
@@ -131,7 +133,8 @@ const publishMarketData = async () =>
             lastTick = nextTick;
         }
     }
-    catch (err) {
+    catch (err)
+    {
         console.error('err: ', err.message.reason);
         client.disconnect();
     }
@@ -139,7 +142,8 @@ const publishMarketData = async () =>
 
 
 // if running a script
-if (typeof require !== 'undefined' && require.main === module) {
+if (typeof require !== 'undefined' && require.main === module)
+{
     publishMarketData();
 }
 // if used as a module
