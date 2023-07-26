@@ -10,6 +10,43 @@ const columnDefs = [
     {headerName: 'Ask', field: 'ask'}
 ];
 
+// In both cases we try to find the index of the existing row by using a matcher:
+const matcher = ({ header }) => ({ key }) => key === header.sowKey();
+
+// When AMPS notifies us that a message is no longer relevant, we remove that message from the grid.
+// The processOOF function is declared outside of the Grid component.
+// Its main purpose to take an OOF message with current row data, and return new, adjusted row data:
+const processOOF = (message, rowData) =>
+{
+    const rowIndex = rowData.findIndex(matcher(message));
+    if(rowIndex >= 0)
+    {
+        const rows = rowData.filter(({ key }) => key !== message.header.sowKey());
+        return rows;
+    }
+    return rowData;
+}
+
+// On the other side, when AMPS notifies us that new information has arrived,
+// we use the data in that message to update the grid. Similar to processOOF,
+// the processPublish function is declared outside of the Grid component,
+// takes a message and current row data and returns new row data:
+const processPublish = (message, rowData) =>
+{
+    const rowIndex = rowData.findIndex(matcher(message));
+    const rows = rowData.slice();
+    if(rowIndex >= 0)
+    {
+        rows[rowIndex] = { ...rows[rowIndex], ...message.data };
+    }
+    else
+    {
+        message.data.key = message.header.sowKey();
+        rows.push(message.data);
+    }
+    return rows;
+}
+
 const Grid = ({client}) =>
 {
     const [rowData, setRowData] = useState([]);
@@ -25,16 +62,6 @@ const Grid = ({client}) =>
                 client.unsubscribe(subIdTef.current);
         }
     }, [client]);
-
-    const processOOF = (message, rowData) =>
-    {
-
-    }
-
-    const processPublish = (message, rowData) =>
-    {
-
-    }
 
     return (
         <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
@@ -71,7 +98,7 @@ const Grid = ({client}) =>
                                 case 'group_end':
                                     setRowData(rows);
                                     break;
-                                // Out-of-focus -- a mesaged should no longer be in the group.
+                                // Out-of-focus -- a message should no longer be in the group.
                                 case 'oof':
                                     rows = processOOF(message, rows);
                                     setRowData(rows);
