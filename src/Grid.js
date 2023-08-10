@@ -50,6 +50,7 @@ const processPublish = (message, rowData) =>
 const Grid = ({client}) =>
 {
     const [rowData, setRowData] = useState([]);
+    const [worker, setWorker] = useState(null);
     // Keep a reference to the subscription ID.
     const subIdTef = useRef();
 
@@ -63,6 +64,13 @@ const Grid = ({client}) =>
         }
     }, [client]);
 
+    useEffect(() =>
+    {
+        const web_worker = new Worker(new URL("./market-data.js", import.meta.url));
+        setWorker(web_worker);
+        return () => web_worker.terminate();
+    }, []);
+
     return (
         <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
             <AgGridReact
@@ -70,9 +78,6 @@ const Grid = ({client}) =>
                 // provide callback to invoke once grid is initialised.
                 onGridReady={ async (api) =>
                 {
-                    // resize columns to fit the width of the grid.
-                    api.sizeColumnsToFit();
-
                     const command = new Command('sow_and_subscribe');
                     command.topic('market_data');
                     command.orderBy('/bid DESC');

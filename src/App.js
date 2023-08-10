@@ -1,27 +1,24 @@
 import Grid from './Grid';
 import './App.css';
-import {useState} from "@types/react";
 import { Client, DefaultServerChooser, DefaultSubscriptionManager } from 'amps';
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 
 const App = () =>
 {
-  const HOST = "localhost";
-  const PORT = "9008";
   const [client, setClient] = useState(null);
-
-  if(!client)
-    return (<div>Loading...</div>);
 
   useEffect(() =>
   {
     const chooser = new DefaultServerChooser();
-    chooser.add(`ws://${HOST}:${PORT}/amps/json`);
+    chooser.add(`ws://localhost:9008/amps/json`);
     const client = new Client("view-server");
     client.serverChooser(chooser);
     client.subscriptionManager(new DefaultSubscriptionManager());
-    client.connect().then(() => setClient(client));
-
+    client.connect().then(() =>
+    {
+      setClient(client);
+      console.log("Connected to AMPS");
+    });
     return () =>
     {
       client.disconnect().then(() => console.log("Client disconnected."));
@@ -29,8 +26,10 @@ const App = () =>
 
   }, [])
 
+  if(!client)
+    return (<div>Loading stock prices...</div>);
+
   return (<Grid client={client}/>);
 }
-
 
 export default App;
