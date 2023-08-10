@@ -15,11 +15,7 @@ const App = () =>
     const client = new Client("view-server");
     client.serverChooser(chooser);
     client.subscriptionManager(new DefaultSubscriptionManager());
-    client.connect().then(() =>
-    {
-      setClient(client);
-      console.log("Connected to AMPS");
-    });
+    client.connect().then(() => setClient(client));
     return () =>
     {
       client.disconnect().then(() => console.log("Client disconnected."));
@@ -33,7 +29,7 @@ const App = () =>
   return (
     <div id="grid-parent">
       <Grid
-          title="Top 20 Symbols by BID"
+          title="Top Symbols Sorted by BID"
           client={client}
           columnDefs={[
             {headerName: 'Symbol', field: 'symbol'},
@@ -44,9 +40,11 @@ const App = () =>
           options="oof,conflation=3000ms,top_n=20,skip_n=0"
           orderBy="/bid DESC"
           animateRows={true}
+          filter="LENGTH(/symbol) = 3"
+          showFilterBar={true}
       />
       <Grid
-          title="Top 50 Symbols by ASK"
+          title="Top Symbols Sorted by Symbol"
           client={client}
           columnDefs={[
             {headerName: 'Symbol', field: 'symbol', sort: 'asc'},
@@ -54,10 +52,9 @@ const App = () =>
             curCol({headerName: 'Ask', field: 'ask'})
           ]}
           topic="market_data"
-          options="oof,conflation=1000ms,top_n=20"
+          options="oof,conflation=1000ms"
           orderBy="/symbol ASC"
           animateRows={false}
-
       />
     </div>
   );

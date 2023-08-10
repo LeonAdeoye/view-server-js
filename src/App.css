@@ -32,3 +32,61 @@ body
 {
     text-align: right;
 }
+
+.status-panel
+{
+    height: 32px;
+    line-height: 32px;
+
+    background: #222628;
+    color: #fff;
+    border: 1px solid #68686e;
+
+    font-weight: bold;
+    text-align: left;
+    padding: 0 8px;
+}
+
+.filter-bar
+{
+    background: #222628;
+    padding: 5px;
+    border: 1px solid #68686e;
+}
+
+.filter-bar > form
+{
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.filter-bar label
+{
+    width: 100%;
+    margin-right: 15px;
+}
+
+.filter-bar input
+{
+    border: none;
+    text-decoration: none;
+    border-radius: 2px;
+    color: #fff;
+    font-size: 13px;
+}
+
+.filter-bar input[type=text]
+{
+    width: 100%;
+    background: #253232;
+    padding: 3px 5px;
+}
+
+.filter-bar input[type=button]
+{
+    cursor: pointer;
+    width: 50px;
+    background-color: #244b5f;
+    padding: 3px 10px;
+}

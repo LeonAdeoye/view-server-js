@@ -6,7 +6,7 @@ const TOPIC = 'market_data';
 const PUBLISH_RATE_PER_SECOND = 2000;
 
 const SYMBOLS = [
-    'MMM', 'ABBV', 'GOOGL', 'AMZN', 'ABI', 'APPL', 'BHP', 'BP',
+    'MSFT', 'NETF', 'GOOGL', 'AMZN', 'META', 'APPL', 'BHP', 'BP', "AI",
     'BATS', 'CVX', 'CSCO', 'XOM', 'GSK', 'HSBA', 'INTC', 'IBM'
 ];
 
@@ -78,8 +78,7 @@ const makeMessage = () =>
 // connect to AMPS and publish the data
 const publishMarketData = async () =>
 {
-    const client = new Client("web-trader-price-reader");
-
+    const client = new Client("web-trader-price-reader-" + new Date().getTime());
     // publish indefinitely at the rate specified.
     // if the rate is 2000, then the publishing rate is 1 message every 2 seconds.
     const rate = 1.0 / PUBLISH_RATE_PER_SECOND * 1000; // 1/2000 * 1000 = 0.5
