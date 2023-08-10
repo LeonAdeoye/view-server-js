@@ -1,9 +1,6 @@
-function numberValueParser(params)
-{
-    return Number(params.newValue);
-}
+const numberValueParser = (params) => Number(params.newValue);
 
-function numberCellFormatter(params)
+const numberCellFormatter = (params) =>
 {
     if (!params || !params.value) {
         return '';
@@ -12,12 +9,9 @@ function numberCellFormatter(params)
     return params.value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-function currencyCellFormatter(params)
-{
-    return '$' + numberCellFormatter(params);
-}
+const currencyCellFormatter = (params) => '$' + numberCellFormatter(params);
 
-export function numCol(column, currency = false)
+export const numCol = (column, currency = false) =>
 {
     column.resizable = true;
     column.valueParser = numberValueParser;
@@ -27,7 +21,6 @@ export function numCol(column, currency = false)
     return column;
 };
 
-export function curCol(column)
-{
-    return numCol(column, true);
-};
+export const curCol = (column) => numCol(column, true);
+
+export const withSelect = (columnDefs, options = '') => (`${options}${options ? ',' : ''}select=[-/,${columnDefs.map(c => '+/' + c.field).join(',')}]`);

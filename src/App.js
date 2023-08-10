@@ -55,6 +55,8 @@ const App = () =>
           options="oof,conflation=1000ms"
           orderBy="/symbol ASC"
           animateRows={false}
+          select={true}
+          delta={true}
       />
     </div>
   );

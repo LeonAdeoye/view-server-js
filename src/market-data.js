@@ -12,7 +12,7 @@ const SYMBOLS = [
 
 // The randInt function returns a random integer value between min and max arguments.
 // Math.random() returns a random number between 0 (inclusive),  and 1 (exclusive).
-const randInt = (min, max) => Math.floor((Math.random() * (max - min + 1)) + min);
+const randomInt = (min, max) => Math.floor((Math.random() * (max - min + 1)) + min);
 
 // The round function rounds a number to a specified number of decimal places.
 const round = (value, digits) => Math.round((value + Number.EPSILON) * Math.pow(10, digits)) / Math.pow(10, digits);
@@ -22,7 +22,7 @@ const timer = async interval => new Promise(resolve => setTimeout(resolve, inter
 
 // Create initial prices
 const pricing = {};
-SYMBOLS.map(symbol => pricing[symbol] = randInt(100, 1200));
+SYMBOLS.map(symbol => pricing[symbol] = randomInt(100, 1200));
 
 let count = 0
 
@@ -36,7 +36,7 @@ const makeMessage = () =>
     // lastPrice is assigned the price associated with the randomly selected symbol from the pricing object.
     // bid is calculated as the lastPrice minus 0.5, rounded to 2 decimal places using the round function.
     // ask is calculated as the lastPrice plus 0.5, rounded to 2 decimal places using the round function.
-    const symbol = SYMBOLS[randInt(0, SYMBOLS.length - 1)];
+    const symbol = SYMBOLS[randomInt(0, SYMBOLS.length - 1)];
     let lastPrice = pricing[symbol];
     const bid = round(lastPrice - 0.5, 2);
     const ask = round(lastPrice + 0.5, 2);
@@ -65,10 +65,7 @@ const makeMessage = () =>
     // Finally, pricing[symbol] updates the pricing object by assigning the rounded value (1200.03) to the last price property with the key symbol ('GOOGL').
     // If the pricing object already had an entry for the 'GOOGL' symbol, it would be overwritten with the new value.
     // If it didn't have an entry, a new property would be added to the pricing object.
-    pricing[symbol] = round(lastPrice + randInt(-5, 5) / 100.0, 2);
-
-    if(count++ <= 20)
-        console.log("symbol: " + symbol + ", bid: " + bid + ", ask: " + ask);
+    pricing[symbol] = round(lastPrice + randomInt(-5, 5) / 100.0, 2);
 
     return { symbol, bid, ask };
 };

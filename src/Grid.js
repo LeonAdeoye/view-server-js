@@ -4,6 +4,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import {useCallback, useEffect, useRef, useState} from "react";
 import {Command, Client} from "amps";
 import FilterBar from './FilterBar';
+import { withSelect } from './grid-helpers';
 
 // In both cases we try to find the index of the existing row by using a matcher:
 const matcher = ({ header }) => ({ key }) => key === header.sowKey();
@@ -42,7 +43,7 @@ const processPublish = (message, rowData) =>
     return rows;
 }
 
-const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, options, animateRows, filter, showFilterBar}) =>
+const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, options, animateRows, filter, showFilterBar, select, delta}) =>
 {
     const [rowData, setRowData] = useState([]);
     const [worker, setWorker] = useState(null);
@@ -79,10 +80,11 @@ const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, option
         }
 
         // create a command object
-        const command = new Command('sow_and_subscribe');
+        const command = new Command(delta ? 'sow_and_delta_subscribe' : 'sow_and_subscribe');
         command.topic(topic);
         command.orderBy(orderBy);
-        command.options(options);
+        const opts = select ? withSelect(columnDefs, options) : options;
+        command.options(opts);
 
         if (filter)
             command.filter(filter);
@@ -118,7 +120,7 @@ const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, option
         {
             setError(`Error: ${err.message}`);
         }
-    }, [client, error, filterInput, options, orderBy, topic]);
+    }, [client, error, filterInput, options, orderBy, topic, select, delta]);
 
     useEffect(() =>
     {
