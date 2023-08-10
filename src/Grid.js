@@ -14,7 +14,7 @@ const columnDefs = [
 const matcher = ({ header }) => ({ key }) => key === header.sowKey();
 
 // When AMPS notifies us that a message is no longer relevant, we remove that message from the grid.
-// The processOOF function is declared outside of the Grid component.
+// The processOOF function is declared outside the Grid component.
 // Its main purpose to take an OOF message with current row data, and return new, adjusted row data:
 const processOOF = (message, rowData) =>
 {
@@ -29,7 +29,7 @@ const processOOF = (message, rowData) =>
 
 // On the other side, when AMPS notifies us that new information has arrived,
 // we use the data in that message to update the grid. Similar to processOOF,
-// the processPublish function is declared outside of the Grid component,
+// the processPublish function is declared outside the Grid component,
 // takes a message and current row data and returns new row data:
 const processPublish = (message, rowData) =>
 {
@@ -72,8 +72,14 @@ const Grid = ({client}) =>
     }, []);
 
     return (
-        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
-            <AgGridReact
+        <div className="ag-theme-alpine" style={{height: 600, width: 600}}>
+            <AgGridReact columnDefs={columnDefs}
+                // we now use state to track row data changes
+                 rowData={rowData}
+                // unique identification of the row based on the SowKey
+                 getRowId={({data: { key }}) => key}
+                // resize columns on grid resize
+                 onGridSizeChanged={({ api }) => api.sizeColumnsToFit()}
 
                 // provide callback to invoke once grid is initialised.
                 onGridReady={ async (api) =>
@@ -121,7 +127,6 @@ const Grid = ({client}) =>
                         console.error('Error: ' + err);
                     }
                 }}
-                columnDefs={columnDefs}
             />
         </div>
     );
