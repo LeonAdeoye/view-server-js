@@ -4,7 +4,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import {useCallback, useEffect, useRef, useState} from "react";
 import {Command, Client} from "amps";
 import FilterBar from './FilterBar';
-import { withSelect } from './grid-helpers';
+import {generateOrderBy, withSelect} from './grid-helpers';
 
 // In both cases we try to find the index of the existing row by using a matcher:
 const matcher = ({ header }) => ({ key }) => key === header.sowKey();
@@ -43,13 +43,15 @@ const processPublish = (message, rowData) =>
     return rows;
 }
 
-const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, options, animateRows, filter, showFilterBar, select, delta}) =>
+const Grid = ({ title, client, width, height, columnDefs, topic, options, animateRows, filter, showFilterBar, select, delta}) =>
 {
     const [rowData, setRowData] = useState([]);
     const [worker, setWorker] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState('Connected');
     const [error, setError] = useState('');
     const subIdRef = useRef(null);
+    // Grid column API reference hook to access column state when subscribing to AMPS.
+    const columnApiRef = useRef(null);
 
     // new filter state value hook
     const [filterInput, setFilterInput] = useState(filter || '');
@@ -82,7 +84,7 @@ const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, option
         // create a command object
         const command = new Command(delta ? 'sow_and_delta_subscribe' : 'sow_and_subscribe');
         command.topic(topic);
-        command.orderBy(orderBy);
+        command.orderBy(generateOrderBy(columnApiRef?.current?.getColumnState() ?? []));
         const opts = select ? withSelect(columnDefs, options) : options;
         command.options(opts);
 
@@ -120,7 +122,7 @@ const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, option
         {
             setError(`Error: ${err.message}`);
         }
-    }, [client, error, filterInput, options, orderBy, topic, select, delta]);
+    }, [client, error, filterInput, options, topic, select, delta]);
 
     useEffect(() =>
     {
@@ -163,10 +165,16 @@ const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, option
                  onGridSizeChanged={({ api }) => api.sizeColumnsToFit()}
 
                 // provide callback to invoke once grid is initialised.
-                onGridReady={ async (api) =>
+                onGridReady={ async ({api, columnApi}) =>
                 {
+                    // Store the reference to ag-Grid's Column API object
+                    columnApiRef.current = columnApi;
                     await sowAndSubscribe();
                 }}
+                // enable sorting from the UI
+                multiSortKey="ctrl"
+                defaultColDef={{sortable: true, suppressMenu: true}}
+                onSortChanged={() => sowAndSubscribe()}
             />
             <div className="status-panel">
                 <span style={{color: connectionStatus === 'Connected' ? 'green' : 'yellow'}}>{connectionStatus}</span>

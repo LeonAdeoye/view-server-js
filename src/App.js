@@ -38,7 +38,6 @@ const App = () =>
           ]}
           topic="market_data"
           options="oof,conflation=3000ms,top_n=20,skip_n=0"
-          orderBy="/bid DESC"
           animateRows={true}
           filter="LENGTH(/symbol) = 3"
           showFilterBar={true}
@@ -53,7 +52,6 @@ const App = () =>
           ]}
           topic="market_data"
           options="oof,conflation=1000ms"
-          orderBy="/symbol ASC"
           animateRows={false}
           select={true}
           delta={true}

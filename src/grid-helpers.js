@@ -24,3 +24,11 @@ export const numCol = (column, currency = false) =>
 export const curCol = (column) => numCol(column, true);
 
 export const withSelect = (columnDefs, options = '') => (`${options}${options ? ',' : ''}select=[-/,${columnDefs.map(c => '+/' + c.field).join(',')}]`);
+
+export const generateOrderBy = columns => (
+    columns
+        .filter(({ sort }) => sort !== null)
+        .sort(({ sortIndex: si1 }, { sortIndex: si2 }) => si1 - si2)
+        .map(({ colId, sort }) => `/${colId} ${sort}`)
+        .join(',')
+);
