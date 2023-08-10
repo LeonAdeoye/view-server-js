@@ -2,6 +2,7 @@ import Grid from './Grid';
 import './App.css';
 import { Client, DefaultServerChooser, DefaultSubscriptionManager } from 'amps';
 import {useEffect, useState} from "react";
+import { curCol } from './grid-helpers';
 
 const App = () =>
 {
@@ -29,7 +30,37 @@ const App = () =>
   if(!client)
     return (<div>Loading stock prices...</div>);
 
-  return (<Grid client={client}/>);
+  return (
+    <div id="grid-parent">
+      <Grid
+          title="Top 20 Symbols by BID"
+          client={client}
+          columnDefs={[
+            {headerName: 'Symbol', field: 'symbol'},
+            curCol({headerName: 'Bid', field: 'bid', sort: 'desc'}),
+            curCol({headerName: 'Ask', field: 'ask'})
+          ]}
+          topic="market_data"
+          options="oof,conflation=3000ms,top_n=20,skip_n=0"
+          orderBy="/bid DESC"
+          animateRows={true}
+      />
+      <Grid
+          title="Top 50 Symbols by ASK"
+          client={client}
+          columnDefs={[
+            {headerName: 'Symbol', field: 'symbol', sort: 'asc'},
+            curCol({headerName: 'Bid', field: 'bid'}),
+            curCol({headerName: 'Ask', field: 'ask'})
+          ]}
+          topic="market_data"
+          options="oof,conflation=1000ms,top_n=20"
+          orderBy="/symbol ASC"
+          animateRows={false}
+
+      />
+    </div>
+  );
 }
 
 export default App;

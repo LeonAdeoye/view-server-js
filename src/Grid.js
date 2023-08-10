@@ -4,12 +4,6 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import {useEffect, useState, useRef} from "react";
 import {Command} from "amps";
 
-const columnDefs = [
-    {headerName: 'Symbol', field: 'symbol'},
-    {headerName: 'Bid', field: 'bid'},
-    {headerName: 'Ask', field: 'ask'}
-];
-
 // In both cases we try to find the index of the existing row by using a matcher:
 const matcher = ({ header }) => ({ key }) => key === header.sowKey();
 
@@ -47,7 +41,7 @@ const processPublish = (message, rowData) =>
     return rows;
 }
 
-const Grid = ({client}) =>
+const Grid = ({ title, client, width, height, columnDefs, topic, orderBy, options, animateRows }) =>
 {
     const [rowData, setRowData] = useState([]);
     const [worker, setWorker] = useState(null);
@@ -72,8 +66,9 @@ const Grid = ({client}) =>
     }, []);
 
     return (
-        <div className="ag-theme-alpine" style={{height: 600, width: 600}}>
-            <AgGridReact columnDefs={columnDefs}
+        <div className="ag-theme-alpine-dark" style={{height: height ?? 800, width: width ?? 900}}>
+            <div className="grid-header">{title}</div>
+            <AgGridReact columnDefs={columnDefs} animateRows={animateRows}
                 // we now use state to track row data changes
                  rowData={rowData}
                 // unique identification of the row based on the SowKey
@@ -85,9 +80,9 @@ const Grid = ({client}) =>
                 onGridReady={ async (api) =>
                 {
                     const command = new Command('sow_and_subscribe');
-                    command.topic('market_data');
-                    command.orderBy('/bid DESC');
-                    command.options('oof, conflation=3000ms, top_n=20, skip_n=0');
+                    command.topic(topic);
+                    command.orderBy(orderBy);
+                    command.options(options);
 
                     try
                     {

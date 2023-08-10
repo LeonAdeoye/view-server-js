@@ -6,11 +6,8 @@ const TOPIC = 'market_data';
 const PUBLISH_RATE_PER_SECOND = 2000;
 
 const SYMBOLS = [
-    'MMM', 'ABBV', 'ALV', 'GOOGL', 'AMZN', 'AMGN', 'ABI', 'APPL', 'BHP', 'BA', 'BP',
-    'BATS', 'CVX', 'CSCO', 'C', 'KO', 'DD', 'XOM', 'FB', 'GE', 'GSK', 'HSBA', 'INTC',
-    'IBM', 'JNJ', 'JPM', 'MA', 'MCD', 'MRK', 'MSFT', 'NESN', 'NOVN', 'NVDA', 'ORCL',
-    'PEP', 'PFE', 'PM', 'PG', 'ROG', 'RY', 'RDSA', 'SMSN', 'SAN', 'SIE', 'TSM', 'TOT',
-    'V', 'WMT', 'DIS'
+    'MMM', 'ABBV', 'GOOGL', 'AMZN', 'ABI', 'APPL', 'BHP', 'BP',
+    'BATS', 'CVX', 'CSCO', 'XOM', 'GSK', 'HSBA', 'INTC', 'IBM'
 ];
 
 // The randInt function returns a random integer value between min and max arguments.
