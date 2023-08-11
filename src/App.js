@@ -41,6 +41,7 @@ const App = () =>
           animateRows={true}
           filter="LENGTH(/symbol) = 3"
           showFilterBar={true}
+          width={450}
       />
       <Grid
           title="Top Symbols Sorted by Symbol"
@@ -55,6 +56,37 @@ const App = () =>
           animateRows={false}
           select={true}
           delta={true}
+          width={450}
+      />
+      <Grid
+        title="Aggregated Market Data"
+        showFilterBar={false}
+        columnDefs={[
+            {headerName: 'Group', field: 'group', sort: 'asc'},
+            curCol({headerName: 'Bid Total', field: 'bid_total'}),
+            curCol({headerName: 'Ask Total', field: 'ask_total'}),
+            {headerName: 'Symbols in Group', field: 'count'}
+        ]}
+        client={client}
+        topic="agg_market_data"
+        options="oof,conflation=3000ms"
+      />
+      <Grid
+        title="Market Data - spreads"
+        width={250}
+        showFilterBar={false}
+        columnDefs={[
+            {headerName: 'Symbol', field: 'symbol', sort: 'asc'},
+            curCol({headerName: 'Spread', field: 'spread'})
+        ]}
+        client={client}
+        topic="market_data"
+        options="oof,conflation=3000ms,
+         grouping=[/symbol],
+         projection=[
+            /symbol,
+            (/ask - /bid) AS /spread
+         ]"
       />
     </div>
   );

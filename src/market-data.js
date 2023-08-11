@@ -3,7 +3,7 @@ const { Client, DefaultServerChooser, MemoryPublishStore } = require('amps');
 const HOST = 'localhost';
 const PORT = '9008';
 const TOPIC = 'market_data';
-const PUBLISH_RATE_PER_SECOND = 2000;
+const PUBLISH_RATE_PER_SECOND = 5;
 
 const SYMBOLS = [
     'MSFT', 'NETF', 'GOOGL', 'AMZN', 'META', 'APPL', 'BHP', 'BP', "AI",
@@ -24,8 +24,6 @@ const timer = async interval => new Promise(resolve => setTimeout(resolve, inter
 const pricing = {};
 SYMBOLS.map(symbol => pricing[symbol] = randomInt(100, 1200));
 
-let count = 0
-
 // The purpose of this function is to generate a plausible update message for market data with adjusted prices.
 // It randomly selects a symbol, calculates bid and ask prices based on the last price,
 // adjusts the prices within a certain range, and returns the symbol along with the bid and ask values as an object.
@@ -36,7 +34,8 @@ const makeMessage = () =>
     // lastPrice is assigned the price associated with the randomly selected symbol from the pricing object.
     // bid is calculated as the lastPrice minus 0.5, rounded to 2 decimal places using the round function.
     // ask is calculated as the lastPrice plus 0.5, rounded to 2 decimal places using the round function.
-    const symbol = SYMBOLS[randomInt(0, SYMBOLS.length - 1)];
+    const index = randomInt(0, SYMBOLS.length - 1);
+    const symbol = SYMBOLS[index];
     let lastPrice = pricing[symbol];
     const bid = round(lastPrice - 0.5, 2);
     const ask = round(lastPrice + 0.5, 2);
@@ -67,7 +66,7 @@ const makeMessage = () =>
     // If it didn't have an entry, a new property would be added to the pricing object.
     pricing[symbol] = round(lastPrice + randomInt(-5, 5) / 100.0, 2);
 
-    return { symbol, bid, ask };
+    return { symbol, bid, ask, group: (index % 10) + 1 };
 };
 
 

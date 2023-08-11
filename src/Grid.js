@@ -153,7 +153,7 @@ const Grid = ({ title, client, width, height, columnDefs, topic, options, animat
     }, [client]);
 
     return (
-        <div className="ag-theme-alpine-dark" style={{height: height ?? 750, width: width ?? 900}}>
+        <div className="ag-theme-alpine-dark" style={{height: height ?? 780, width: width ?? 600}}>
             <div className="grid-header">{title}</div>
             {showFilterBar && <FilterBar value={filterInput} onValueChange={sowAndSubscribe} />}
             <AgGridReact columnDefs={columnDefs} animateRows={animateRows}
